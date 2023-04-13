@@ -1,6 +1,15 @@
-import { httpBatchLink, loggerLink } from "@trpc/client";
+import {
+  httpBatchLink,
+  httpLink,
+  loggerLink,
+  createTRPCClient,
+} from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
-import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
+import {
+  AnyRouter,
+  type inferRouterInputs,
+  type inferRouterOutputs,
+} from "@trpc/server";
 import superjson from "superjson";
 
 import { type AppRouter } from "../server/trpc/router/_app";
@@ -12,6 +21,9 @@ const getBaseUrl = () => {
 };
 
 export const trpc = createTRPCNext<AppRouter>({
+  // newtから複数のAPIを呼び出してひとつにまとめる
+  // https://trpc.io/docs/ssg#-servertrpcnextts
+
   config() {
     return {
       transformer: superjson,
@@ -21,13 +33,34 @@ export const trpc = createTRPCNext<AppRouter>({
             process.env.NODE_ENV === "development" ||
             (opts.direction === "down" && opts.result instanceof Error),
         }),
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-        }),
+        // httpBatchLink({
+        //   url: "https://shishanchu.cdn.newt.so/v1",
+        // }),
+        // newt(ヘッドレスCMS)のAPIデータを取得する
+        // 取得にはuidとtokenが必要
+        // httpLink({
+        //   url: "https://shishanchu.cdn.newt.so/v1",
+        //   headers: {
+        //     "X-Api-Key": "uid",
+        //     "X-Api-Secret": "token",
+        //   },
+        // })
       ],
     };
   },
   ssr: false,
+});
+
+export const newtAPI = createTRPCClient({
+  links: [
+    httpLink({
+      url: "https://shishanchu.com/api/v1/trpc",
+      headers: {
+        "X-Api-Key": "uid",
+        "X-Api-Secret": "token",
+      },
+    }),
+  ],
 });
 
 /**
