@@ -6,18 +6,19 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { newtClient } from "../lib/newt/client";
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ data }) => {
+  console.log(data);
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  // console.log(hello);
-  const test = async () => {
-    const res = await newtClient.getContents({
-      appUid: "contents-248035",
-      modelUid: "post",
-    });
-    return res;
-    // console.log(res);
-  };
-  console.log(test);
+  // // console.log(hello);
+  // const test = async () => {
+  //   const res = await newtClient.getContents({
+  //     appUid: "contents-248035",
+  //     modelUid: "post",
+  //   });
+  //   return res;
+  //   // console.log(res);
+  // };
+  // console.log(test);
   // console.log(1, newtClient);
 
   return (
@@ -67,6 +68,24 @@ const Home: NextPage = () => {
 };
 
 export default Home;
+
+export const getServerSideProps = async () => {
+  const token = "cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs";
+  const newtApi = await fetch(
+    "https://seeshanchu.cdn.newt.so/v1/contents-248035/post",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const data = await newtApi.json();
+  return {
+    props: {
+      data,
+    },
+  };
+};
 
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
