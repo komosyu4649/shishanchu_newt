@@ -33,6 +33,12 @@ export const trpc = createTRPCNext<AppRouter>({
             process.env.NODE_ENV === "development" ||
             (opts.direction === "down" && opts.result instanceof Error),
         }),
+        // httpLink({
+        //   url: `https://seeshanchu.api.newt.so/v1`,
+        //   headers: {
+        //     Authorization: `Bearer cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs`,
+        //   },
+        // }),
         // httpBatchLink({
         //   url: "https://shishanchu.cdn.newt.so/v1",
         // }),
@@ -51,17 +57,27 @@ export const trpc = createTRPCNext<AppRouter>({
   ssr: false,
 });
 
-export const newtAPI = createTRPCClient({
-  links: [
-    httpLink({
-      url: "https://shishanchu.com/api/v1/trpc",
-      headers: {
-        "X-Api-Key": "uid",
-        "X-Api-Secret": "token",
-      },
-    }),
-  ],
-});
+// export const newtAPI = createTRPCClient({
+//   links: [
+//     httpLink({
+//       url: "https://seeshanchu.api.newt.so/v1/contents-248035/post",
+//     }),
+//   ],
+// });
+// export const newtAPI = createTRPCClient({
+//   links: [
+//     httpBatchLink({
+//       links: [
+//         httpLink({
+//           url: `https://seeshanchu.api.newt.so/v1`,
+//           headers: {
+//             Authorization: `Bearer cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs`,
+//           },
+//         }),
+//       ],
+//     }),
+//   ],
+// });
 
 /**
  * Inference helper for inputs

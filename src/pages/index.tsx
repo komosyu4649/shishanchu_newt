@@ -4,10 +4,21 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
+import { newtClient } from "../lib/newt/client";
 
 const Home: NextPage = () => {
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
-  console.log(hello);
+  // console.log(hello);
+  const test = async () => {
+    const res = await newtClient.getContents({
+      appUid: "contents-248035",
+      modelUid: "post",
+    });
+    return res;
+    // console.log(res);
+  };
+  console.log(test);
+  // console.log(1, newtClient);
 
   return (
     <>
