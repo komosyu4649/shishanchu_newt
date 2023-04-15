@@ -6,8 +6,8 @@ import { signIn, signOut, useSession } from "next-auth/react";
 import { trpc } from "../utils/trpc";
 import { newtClient } from "../lib/newt/client";
 
-const Home: NextPage = ({ data }) => {
-  console.log(data);
+const Home: NextPage = ({ test }) => {
+  // console.log(data);
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
   // // console.log(hello);
   // const test = async () => {
@@ -70,6 +70,19 @@ const Home: NextPage = ({ data }) => {
 export default Home;
 
 export const getServerSideProps = async () => {
+  // const test = await fetch("http://localhost:3000/api/newt", {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   // headers: {
+  //   //   Authorization: `Bearer cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs`,
+  //   // },
+  // });
+  // console.log(123, await test.json());
+  const res = await fetch("http://localhost:3000/api/newt");
+  const data = await res.json();
+  // console.log(123, data);
   const token = "cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs";
   const newtApi = await fetch(
     "https://seeshanchu.cdn.newt.so/v1/contents-248035/post",
@@ -79,10 +92,10 @@ export const getServerSideProps = async () => {
       },
     }
   );
-  const data = await newtApi.json();
+  const test = await newtApi.json();
   return {
     props: {
-      data,
+      test,
     },
   };
 };
