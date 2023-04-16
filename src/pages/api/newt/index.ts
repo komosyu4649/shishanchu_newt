@@ -50,7 +50,13 @@ import axios from "axios";
 const ACCOUNTS = [
   {
     spaceUid: "seeshanchu",
+    appUid: "contents-248035",
     apiToken: "cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs",
+  },
+  {
+    spaceUid: "shishanchu2",
+    appUid: "contents-427830",
+    apiToken: "TPNA5u9jaPOHOXoEGce7eMw0GtCzFrNBc6-3baAVayE",
   },
   //   { spaceUid: "spaceUid2", apiToken: "apiToken2" },
   // 追加のアカウント情報をここに記述
@@ -61,48 +67,20 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    // Promise.allで並列でAPIからデータを取得する
-    // const results = await Promise.all(
-    //   ACCOUNTS.map(async ({ spaceUid, apiToken }) => {
-    const { data } = await axios.get(
-      `https://seeshanchu.cdn.newt.so/v1/contents-248035/post`,
-      {
-        headers: {
-          Authorization: `Bearer cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs`,
-        },
-      }
+    const results = await Promise.all(
+      ACCOUNTS.map(async ({ spaceUid, apiToken, appUid }) => {
+        const { data } = await axios.get(
+          `https://${spaceUid}.cdn.newt.so/v1/${appUid}/post`,
+          {
+            headers: {
+              Authorization: `Bearer ${apiToken}`,
+            },
+          }
+        );
+        return data;
+      })
     );
-    console.log(data);
-    // return data;
-    //   })
-    // );
-    // 取得したデータを1つに結合する
-    // const combinedData = results.reduce((acc, data) => {
-    //   return [...acc, ...data];
-    // }, []);
-    res.status(200).json(data);
-    //
-    // const apiData = ACCOUNTS.map(({ spaceUid, apiToken }) => {
-    //   return {
-    //     // url: `https://${spaceUid}.api.newt.so/v1/contents-248035/post`,
-    //     url: `https://${spaceUid}.cdn.newt.so/v1/contents-248035/post`,
-    //     headers: {
-    //       Authorization: `Bearer ${apiToken}`,
-    //     },
-    //   };
-    // });
-    // // axiosでAPIからデータを取得するPromiseを生成する
-    // const promises = apiData.map((data) => {
-    //   return axios.get(data.url, { headers: data.headers });
-    // });
-    // // Promise.allSettledで全てのPromiseを実行する
-    // const results = await Promise.allSettled(promises);
-    // // 取得したデータを1つに結合する
-    // const combinedData = results
-    //   .filter(({ status }) => status === "fulfilled")
-    //   .map(({ value }) => value.data)
-    //   .reduce((acc, data) => [...acc, ...data], []);
-    // res.status(200).json(combinedData);
+    res.status(200).json(results);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });

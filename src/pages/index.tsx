@@ -82,7 +82,7 @@ export const getServerSideProps = async () => {
   // console.log(123, await test.json());
   const res = await fetch("http://localhost:3000/api/newt");
   const data = await res.json();
-  // console.log(123, data);
+  console.log(1234, data);
   const token = "cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs";
   const newtApi = await fetch(
     "https://seeshanchu.cdn.newt.so/v1/contents-248035/post",
