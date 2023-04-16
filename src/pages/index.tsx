@@ -4,9 +4,22 @@ import Link from "next/link";
 import { signIn, signOut, useSession } from "next-auth/react";
 
 import { trpc } from "../utils/trpc";
+import { newtClient } from "../lib/newt/client";
 
-const Home: NextPage = () => {
+const Home: NextPage = ({ test }) => {
+  // console.log(data);
   const hello = trpc.example.hello.useQuery({ text: "from tRPC" });
+  // // console.log(hello);
+  // const test = async () => {
+  //   const res = await newtClient.getContents({
+  //     appUid: "contents-248035",
+  //     modelUid: "post",
+  //   });
+  //   return res;
+  //   // console.log(res);
+  // };
+  // console.log(test);
+  // console.log(1, newtClient);
 
   return (
     <>
@@ -56,12 +69,43 @@ const Home: NextPage = () => {
 
 export default Home;
 
+export const getServerSideProps = async () => {
+  // const test = await fetch("http://localhost:3000/api/newt", {
+  //   method: "GET",
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //   },
+  //   // headers: {
+  //   //   Authorization: `Bearer cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs`,
+  //   // },
+  // });
+  // console.log(123, await test.json());
+  const res = await fetch("http://localhost:3000/api/newt");
+  const data = await res.json();
+  console.log(1234, data);
+  const token = "cppO2mmGSgVdWu0FUvyPY3mr7KGY4-i0MwYVDbLw2Gs";
+  const newtApi = await fetch(
+    "https://seeshanchu.cdn.newt.so/v1/contents-248035/post",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const test = await newtApi.json();
+  return {
+    props: {
+      test,
+    },
+  };
+};
+
 const AuthShowcase: React.FC = () => {
   const { data: sessionData } = useSession();
 
   const { data: secretMessage } = trpc.auth.getSecretMessage.useQuery(
     undefined, // no input
-    { enabled: sessionData?.user !== undefined },
+    { enabled: sessionData?.user !== undefined }
   );
 
   return (
